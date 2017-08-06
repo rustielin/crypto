@@ -15,6 +15,9 @@ const (
 	KeySize = 32
 	// NonceSize is the size of the nonce used with this AEAD, in bytes.
 	NonceSize = 12
+
+	// Overhead is the number of bytes of overhead when boxing a message
+	Overhead = poly1305.TagSize
 )
 
 type chacha20poly1305 struct {
@@ -34,8 +37,6 @@ func New(key []byte) (cipher.AEAD, error) {
 func (c *chacha20poly1305) NonceSize() int {
 	return NonceSize
 }
-// Overhead is the number of bytes of overhead when boxing a message
-const Overhead = poly1305.TagSize
 
 func (c *chacha20poly1305) Overhead() int {
 	return Overhead
