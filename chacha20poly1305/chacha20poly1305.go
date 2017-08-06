@@ -35,10 +35,13 @@ func (c *chacha20poly1305) NonceSize() int {
 	return NonceSize
 }
 
+
 func (c *chacha20poly1305) Overhead() int {
 	return 16
 }
 
+const Overhead = poly1305.TagSize
+// output will be Overhead bytes longer than message
 func (c *chacha20poly1305) Seal(dst, nonce, plaintext, additionalData []byte) []byte {
 	if len(nonce) != NonceSize {
 		panic("chacha20poly1305: bad nonce length passed to Seal")
