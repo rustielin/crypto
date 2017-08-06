@@ -42,7 +42,24 @@ func (c *chacha20poly1305) Overhead() int {
 	return Overhead
 }
 
+// setup produces a sub-key and counter given a nonce and key.
+func setup(subKey *[32]byte, counter *[16]byte, nonce *[24]byte, key *[32]byte) {
+	// We use XSalsa20 for encryption so first we need to generate a
+	// key and nonce with HSalsa20.
+	var hNonce [16]byte
+	copy(hNonce[:], nonce[:])
+	// salsa.HSalsa20(subKey, &hNonce, key, &salsa.Sigma)
+	chacha20.core(subKey, &hNonce, key)
+	// The final 8 bytes of the original nonce form the new nonce.
+	copy(counter[:], nonce[16:])
+}
+
 // output will be Overhead bytes longer than message
+// dst -- out
+// nonce -- 24 bytes
+// plaintext -- message arbitrary
+// additionalData --
+// take in a key and calculate a sub-key through setup
 func (c *chacha20poly1305) Seal(dst, nonce, plaintext, additionalData []byte) []byte {
 	if len(nonce) != NonceSize {
 		panic("chacha20poly1305: bad nonce length passed to Seal")
