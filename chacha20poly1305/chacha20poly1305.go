@@ -34,13 +34,13 @@ func New(key []byte) (cipher.AEAD, error) {
 func (c *chacha20poly1305) NonceSize() int {
 	return NonceSize
 }
-
+// Overhead is the number of bytes of overhead when boxing a message
+const Overhead = poly1305.TagSize
 
 func (c *chacha20poly1305) Overhead() int {
-	return 16
+	return Overhead
 }
 
-const Overhead = poly1305.TagSize
 // output will be Overhead bytes longer than message
 func (c *chacha20poly1305) Seal(dst, nonce, plaintext, additionalData []byte) []byte {
 	if len(nonce) != NonceSize {
